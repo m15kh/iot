@@ -1,0 +1,321 @@
+#include <Arduino.h>
+#include <ESP8266WiFi.h>
+#include <PubSubClient.h>
+#include <DallasTemperature.h>
+////////////////////////////////
+const char *ssid = "net";               // net      //za
+const char *pass = "13801380vendar";    // 13801380vendar          //khalili1380
+const char *host = "broker.hivemq.com"; // broker.hivemq.com
+///////////////////////////////////////
+WiFiClient espclient;
+PubSubClient servermqtt(espclient);
+////////////////////////////////////
+int previoustime = 0;
+int timeupdate = 2000;
+///////////////////////////
+int led_wifi_trying = 0;
+int led_wifi_connect = 2;
+///////////////////////////
+int led1 = 16;
+int led2 = 5;
+///////////////////////////
+const int snsor_temp = 4;
+OneWire  one_wire(snsor_temp);
+DallasTemperature sensorr(&one_wire);
+//////////////////////////
+int led_mode_wifi_host = 15;
+int led_mode_wifi_connect = 13;
+////////////////////////////
+int led_server_trying = 12;
+int led_server_connect = 14;
+
+///////////////////////////////////////////////////////////////
+
+/////////////////////////////
+String status_1 = "off1";
+String status_2 = "off2";
+//////////////////////////////
+
+void function_led_server();
+ float func_sensor();
+
+void wifi_connect();
+void reconnect();
+////////////////////////////////
+void mqtt_call_back(char *topic, byte *payload, unsigned int length);
+
+void setup()
+{pinMode(snsor_temp,INPUT);
+/////////////////////
+    pinMode(led1, OUTPUT);
+    digitalWrite(led1, LOW);
+
+    pinMode(led2, OUTPUT);
+    digitalWrite(led2, LOW);
+    ///////////////////////
+    pinMode(led_wifi_trying, OUTPUT);
+    digitalWrite(led_wifi_trying, LOW);
+
+    pinMode(led_wifi_connect, OUTPUT);
+    digitalWrite(led_wifi_connect, LOW);
+    ////////////////
+
+    pinMode(led_mode_wifi_connect, OUTPUT);
+    digitalWrite(led_mode_wifi_connect, LOW);
+
+    pinMode(led_mode_wifi_host, OUTPUT);
+    digitalWrite(led_mode_wifi_host, LOW);
+    /////////////////////////////////////////////////////
+
+    pinMode(led_server_trying, OUTPUT);
+    digitalWrite(led_server_trying, LOW);
+
+    pinMode(led_server_connect, OUTPUT);
+    digitalWrite(led_server_connect, LOW);
+    ////////////////////////////////////////////////////
+    Serial.begin(115200);
+    sensorr.begin();
+    ///////////////////////////
+    wifi_connect();
+///////////////////////////////////
+    servermqtt.setServer(host, 1883);
+    servermqtt.setCallback(mqtt_call_back);
+    servermqtt.setKeepAlive(5);
+}
+
+void loop()
+{
+
+    char buffer1[50];
+    if (!servermqtt.connected())
+    {
+
+        reconnect();
+    }
+
+    digitalWrite(led_server_trying, LOW);
+    digitalWrite(led_server_connect, HIGH);
+    servermqtt.loop();
+
+    int timenow = millis();
+    if (timenow - previoustime > timeupdate)
+    {
+        previoustime = timenow;
+    
+        float temperturenow = func_sensor();
+        Serial.println(temperturenow);
+
+        sprintf(buffer1, " status:online/led1:%s/led2:%s/sensor:%.1f", status_1, status_2,temperturenow);
+        servermqtt.publish("m15kh10001", buffer1, false);
+        // Serial.println(buffer1);
+        Serial.println();
+    }
+}
+
+void wifi_connect()
+{
+    WiFi.begin(ssid, pass);
+    Serial.printf("connecting to %s", ssid);
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        Serial.print('.');
+
+        digitalWrite(led_wifi_trying, HIGH);
+        delay(150);
+        digitalWrite(led_wifi_trying, LOW);
+        delay(150);
+    }
+    digitalWrite(led_wifi_trying, LOW);
+    digitalWrite(led_wifi_connect, HIGH);
+
+    Serial.printf("\nsucseefuly connect to %s", ssid);
+    Serial.print("\nyour ip is :");
+    Serial.println(WiFi.localIP());
+    randomSeed(millis());
+}
+
+void reconnect()
+{
+    while (!servermqtt.connected())
+    {
+        digitalWrite(led_server_trying, HIGH);
+        digitalWrite(led_server_connect, HIGH);
+
+        Serial.println("attendeing to connect mqtt");
+        String clientid = "khalili-";
+        clientid += String(random(0xffff), HEX);
+        // boolean connect (clientID, [username, password], [willTopic, willQoS, willRetain, willMessage], [cleanSession])
+
+        if (servermqtt.connect(clientid.c_str(),NULL,NULL,"m15kh10001",0,"","status:offline/led1:on1/led2:on2/sensor:0"))
+        {
+            char buffer2[50];
+            sprintf(buffer2, " status:offline/led1:off1/led2:off2/sensor:0");
+            servermqtt.publish("m15kh10001", buffer2, true);
+            servermqtt.subscribe("m15khha");
+            digitalWrite(led_server_trying, LOW);
+            digitalWrite(led_server_connect, HIGH);
+        }
+        else
+        {
+
+            Serial.println("failed");
+            Serial.println("wainting for 5 secend");
+            if (WiFi.status() != WL_CONNECTED)
+            {
+                digitalWrite(led_server_trying, LOW);
+                 digitalWrite(led_server_connect, LOW);
+                  digitalWrite(led_wifi_connect, LOW);
+
+                wifi_connect();
+            }
+            digitalWrite(led_server_trying, HIGH);
+            digitalWrite(led_server_connect, LOW);
+            function_led_server();
+        }
+    }
+}
+
+void mqtt_call_back(char *topic, byte *payload, unsigned int length)
+{
+    Serial.print("[ you have messeage  from :  ");
+    Serial.print(topic);
+    Serial.println("] :");
+
+    char buffer[40];
+    for (unsigned int i = 0; i < length; i++)
+    {
+        Serial.print((char)payload[i]);
+
+        buffer[i] = (char)payload[i];
+    }
+    Serial.println();
+    buffer[length] = '\0';
+    String command = String(buffer);
+
+    if (command == "turn_on_lamp1")
+    {
+        digitalWrite(led1, HIGH);
+
+        status_1 = "on1";
+    }
+    else if (command == "turn_off_lamp1")
+    {
+        digitalWrite(led1, LOW);
+
+        status_1 = "off1";
+    }
+    else if (command == "turn_off_lamp2")
+    {
+        digitalWrite(led2, LOW);
+        status_2 = "off2";
+    }
+    else if (command == "turn_on_lamp2")
+    {
+        digitalWrite(led2, HIGH);
+        status_2 = "on2";
+    }
+}
+
+
+float func_sensor(){
+    sensorr.requestTemperatures();
+    float temperture_c = sensorr.getTempCByIndex(0);
+    return temperture_c;
+
+
+}
+
+
+
+void function_led_server()
+{
+
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+    digitalWrite(led_server_trying, HIGH);
+    delay(150);
+    digitalWrite(led_server_trying, LOW);
+    delay(150);
+}

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta clie="refresh" content="700">
+
+
+    <!-- <button onClick="history.go(0);">Refresh Page</button>    باتن رفرش سایت -->
+    <div id="span_head1">
+        <span class="status"> Server Status :</span>
+        <span id="alarm1">Reloading...</span>
+        <div id="alarm1_2"> </div>
+    </div>
+
+    <div id="span_head2">
+        <div class="status">Device Status :</div>
+        <div id="alarm2"> Reloading... </div>
+        <div id="alarm2_2"></div>
+    </div>
+    <link rel="stylesheet" href="two.css">
+    <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+    <!-- plot -->
+    <script async="" src="Line Chart_files/analytics.js"></script>
+    <script src="Line Chart_files/Chart.js"></script>
+    <style type="text/css">
+        /* Chart.js */
+        
+        @-webkit-keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+        
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: 0.99
+            }
+            to {
+                opacity: 1
+            }
+        }
+        
+        .chartjs-render-monitor {
+            -webkit-animation: chartjs-render-animation 0.001s;
+            animation: chartjs-render-animation 0.001s;
+        }
+    </style>
+    <script src="Line Chart_files/utils.js"></script>
+
+
+
+    <style>
+        canvas {
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+    </style>
+    <!-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+    <title>iot</title>
+
+    <script type="text/javascript" src="js/mqttws31.js"></script>
+    <script type="text/javascript" src="js/client.js"></script>
+
+
+</head>
+
+
+<body>
+    <div style="display: block; height: 60px;background-color: rgb(130, 133, 128);    padding: 0;
+    margin: 0;"></div>
+    </div>
+    <div style="background-color: rgb(130, 133, 128);margin-top: -20px;    padding: 0;">
+        <!--      //////////////////////bachgroundddddd -->
+        <div>
+            <div id="box1">
+
+                <div class="line_lamp">
+
+                </div>
+                <div id="write2">
+                    <h1>Lamp </h1>
+                    <h1 id="a"> A</h1>
+                </div>
+                <div class="rods"></div>
+
+                <div class="zozanaghe"></div>
+
+
+
+                <div>
+                    <div id="semi_circle1"></div>
+
+
+
+
+
+                </div>
+
+                <div>
+                    <audio id="music1">
+                
+                    <source src="https://docs.google.com/uc?export=download&id=1WKG6tfG7XKvTLMtUGwWW9vlBuScAMuP5">
+                        </audio>
+
+                    <div id="switch1">
+                        <input type="checkbox" id="check_lamp1" onclick="control_lamp1(),connect_net_lamp1()">
+                        <label for="check_lamp1" id="lable_lamp1">
+                </label>
+                        <div id="trapezium1"></div>
+                        <div id="nakh1"></div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+
+            </div>
+        </div>
+        <!-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+        <div>
+            <div id="box2">
+
+                <div class="line_lamp">
+
+
+                </div>
+                <div id="write2">
+                    <h1>Lamp </h1>
+                    <h1 id="a"> B</h1>
+                </div>
+                <div class="rods"></div>
+                <div class="zozanaghe"></div>
+
+
+
+                <div>
+                    <div id="semi_circle2"></div>
+
+
+
+
+
+                </div>
+
+                <div>
+                    <audio id="music2">
+                
+                    <source src="https://docs.google.com/uc?export=download&id=1WKG6tfG7XKvTLMtUGwWW9vlBuScAMuP5">
+                        </audio>
+
+                    <div id="switch2">
+                        <input type="checkbox" id="check_lamp2" onclick="control_lamp2(),connect_net_lamp2()">
+                        <label for="check_lamp2" id="lable_lamp2">
+                </label>
+                        <div id="trapezium2"></div>
+                        <div id="nakh2"></div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+
+            </div>
+
+        </div>
+        <div id="box3">
+
+            <div id="border_temp">
+                <div id="temp_inside"></div>
+            </div>
+            <div><span style="font-size:x-large ;margin-left: 53px;">0&#8451</span><span style="font-size:x-large ;margin-left: 230px;">100&#8451</span></div>
+            <br>
+            <div><span id="sensor" style="font-size:65px;margin-left: 120px;"></span> <span style="font-size: 65px;">&#8451</span></div>
+
+        </div>
+    </div>
+
+    <div style="display: block;background-color: rgb(130, 133, 128);height: 50px;border-radius: 0px 0px 40px 40px; "> </div>
+
+    <div style="width:900px;margin-left: 20px;">
+        <div style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;" class="chartjs-size-monitor">
+            <div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                <div style="position:absolute;width:1500px;height:1500px;left:0;top:0"></div>
+            </div>
+            <div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+            </div>
+        </div>
+        <canvas id="canvas" style="display: block; width: 900px; height: 1000px;" width="950" height="534" class="chartjs-render-monitor"></canvas> </div>
+    <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+
+
+    <!-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+
+    <script src="js/two.js"></script>
+
+    <script>
+        var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        var config = {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Temperature',
+                    backgroundColor: window.chartColors.red,
+                    borderColor: window.chartColors.red,
+                    data: [],
+                    fill: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: ''
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Date'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Temperature'
+                        }
+                    }]
+                }
+            }
+        };
+
+        window.onload = function() {
+            var ctx = document.getElementById('canvas').getContext('2d');
+            window.myLine = new Chart(ctx, config);
+        };
+
+        function addData(tempData) {
+            d = new Date();
+            if (config.data.datasets.length > 0) {
+                config.data.labels.push(d.getFullYear() + '/' + d.getDate() + '/' + d.getMonth() + ' (' + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + ")");
+
+                config.data.datasets.forEach(function(dataset) {
+                    dataset.data.push(tempData);
+                });
+
+                window.myLine.update();
+            }
+        }
+    </script>
+
+
+
+
+
+
+
+</body>
+
+</html>
