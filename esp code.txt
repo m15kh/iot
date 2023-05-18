@@ -3,8 +3,8 @@
 #include <PubSubClient.h>
 #include <DallasTemperature.h>
 ////////////////////////////////
-const char *ssid = "net";               // net      //za
-const char *pass = "13801380vendar";    // 13801380vendar          //khalili1380
+const char *ssid = "name of your wifi";               // net      //za
+const char *pass = "your password of wifi"; 
 const char *host = "broker.hivemq.com"; // broker.hivemq.com
 ///////////////////////////////////////
 WiFiClient espclient;
