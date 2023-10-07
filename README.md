@@ -19,7 +19,9 @@
 ## :star2: About the Project
 
 ### :camera: Screenshots
-<div align="center"> <a href=""><img src=https://github.com/liam1550/iot/blob/main/1.png alt="logo" width=350 height=700 /></a> </div>
+<div align="center"> <a href=""><img src=https://github.com/liam1550/iot/blob/main/1.png alt="logo" width=350 height=700 /></a>
+<a href=""><img src=https://github.com/liam1550/iot/blob/main/2.png alt="logo" width=350 height=700 /></a>
+<a href=""><img src=https://github.com/liam1550/iot/blob/main/3.png alt="logo" width=350 height=700 /></a></div>
 
 
 
