@@ -19,7 +19,7 @@
 ## :star2: About the Project
 
 ### :camera: Screenshots
-<div align="center"> <a href=""><img src="https://github.com/liam1550/iot/blob/main/1.png" alt='image' width='800'/></a> </div>
+<div align="center"> <a href=""><img src="https://github.com/liam1550/iot/blob/main/1.png" alt='imagewidth=350 height=700/></a> </div>
 
 
 
