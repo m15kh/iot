@@ -22,9 +22,9 @@
 <div align="center"> <a href=""><img src=https://github.com/m15kh/iot/blob/main/1.png alt="logo" width=350 height=700 /></a>
 <a href=""><img src=https://github.com/m15kh/iot/blob/main/2.png alt="logo" width=350 height=700 /></a>
 <a href=""><img src=https://github.com/m15kh/iot/blob/main/3.png alt="logo" width=350 height=700 /></a></div>
-<div align="center"> <a href=""><img src=https://github.com/m15kh/iot/blob/main/4.jpg alt="logo" width=700 height=700 /></a>
-<a href=""><img src=https://github.com/m15kh/iot/blob/main/5.jpg alt="logo" width=700 height=700 /></a>
-<a href=""><img src=https://github.com/m15kh/iot/blob/main/6.jpg alt="logo" width=700 height=700 /></a></div>
+<div align="center"> <a href=""><img src=https://github.com/m15kh/iot/blob/main/4.jpg alt="logo" width=400 height=1000 /></a>
+<a href=""><img src=https://github.com/m15kh/iot/blob/main/5.jpg alt="logo" width=400 height=1000 /></a>
+<a href=""><img src=https://github.com/m15kh/iot/blob/main/6.jpg alt="logo" width=400 height=1000 /></a></div>
 
 
 ## :handshake: Contact
